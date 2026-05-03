@@ -15,6 +15,20 @@ function App() {
   const [speed, setSpeed] = useState(20);
   const animationRef = useRef<number | null>(null);
 
+  // Dark Mode State with System Preference check
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  // Sync theme class with body to ensure entire page background changes
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+    }
+  }, [isDarkMode]);
+
   const stopAnimation = () => {
     if (animationRef.current) {
       window.clearInterval(animationRef.current);
@@ -118,6 +132,14 @@ function App() {
             <option value={5}>Fast</option>
           </select>
         </div>
+
+        <button 
+          className="button btn-secondary" 
+          onClick={() => setIsDarkMode(!isDarkMode)}
+          title="Toggle Dark/Light Mode"
+        >
+          {isDarkMode ? '☀️ Light' : '🌙 Dark'}
+        </button>
       </div>
       
       <div className="grid-wrapper">

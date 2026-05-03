@@ -1,13 +1,17 @@
 :root {
+  /* Light Theme Variables */
   --bg-color: #f8fafc;
   --panel-bg: #ffffff;
   --text-main: #1e293b;
   --text-muted: #64748b;
   --border-color: #e2e8f0;
+  --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --grid-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
   
   --cell-size: 25px;
   --grid-bg: #334155;
   
+  /* Constant Grid Colors (Optimized for both themes) */
   --color-wall: #1e293b;
   --color-start-goal: #ef4444;
   --color-visited: #60a5fa;
@@ -18,8 +22,25 @@
   --primary-hover: #2563eb;
   --success: #10b981;
   --success-hover: #059669;
+  --btn-sec-bg: #f1f5f9;
 }
 
+/* Dark Theme Overrides (Applied to body) */
+.dark-theme {
+  --bg-color: #020617; /* Neutral very dark background */
+  --panel-bg: #1e293b; /* Distinct elevated panel */
+  --text-main: #f0f0f0; /* Bright off-white for high readability */
+  --text-muted: #aaaaaa; /* Neutral light gray for secondary text */
+  --border-color: #334155; /* Subtle light border for contrast */
+  --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  --grid-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+  
+  --color-empty: #1e293b; /* Neutral dark maze cells */
+  --color-wall: #000000;  /* Distinct pure black walls */
+  --btn-sec-bg: #1e293b;
+}
+
+/* Global Body Styles */
 body {
   margin: 0;
   padding: 0;
@@ -30,6 +51,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -49,6 +71,7 @@ h1 {
   margin-bottom: 1.5rem;
   letter-spacing: -0.025em;
   color: var(--text-main);
+  transition: color 0.3s ease;
 }
 
 /* Dashboard Control Panel */
@@ -56,13 +79,14 @@ h1 {
   background: var(--panel-bg);
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  box-shadow: var(--card-shadow);
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.2rem;
   margin-bottom: 2rem;
   border: 1px solid var(--border-color);
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .button {
@@ -73,16 +97,19 @@ h1 {
   cursor: pointer;
   transition: all 0.2s;
   font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .btn-secondary {
-  background-color: #f1f5f9;
+  background-color: var(--btn-sec-bg);
   color: var(--text-main);
   border: 1px solid var(--border-color);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: #e2e8f0;
+  opacity: 0.8;
 }
 
 .btn-primary {
@@ -106,15 +133,23 @@ h1 {
   gap: 0.5rem;
   font-weight: 500;
   color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+/* Ensure control panel labels are white in dark mode */
+.dark-theme .select-wrapper {
+  color: #ffffff;
 }
 
 select {
   padding: 0.5rem;
   border-radius: 6px;
   border: 1px solid var(--border-color);
-  background: white;
+  background: var(--panel-bg);
+  color: var(--text-main);
   font-size: 0.9rem;
   cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Grid Styles */
@@ -130,7 +165,8 @@ select {
   background-color: var(--grid-bg);
   border: 2px solid var(--grid-bg);
   width: fit-content;
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  box-shadow: var(--grid-shadow);
+  transition: box-shadow 0.3s ease;
 }
 
 .cell {
@@ -171,6 +207,7 @@ select {
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--text-muted);
+  transition: color 0.3s ease;
 }
 
 .legend-item {
