@@ -1,37 +1,17 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+import Cell from './Cell';
 
 interface GridProps {
   grid: number[][];
-  path: [number, number][];
-  visited: [number, number][];
+  pathSet: Set<string>;
+  visitedSet: Set<string>;
 }
 
-const Grid: React.FC<GridProps> = ({ grid = [], path = [], visited = [] }) => {
+const Grid: React.FC<GridProps> = ({ grid = [], pathSet, visitedSet }) => {
   if (!grid || grid.length === 0) return <div>No maze generated yet.</div>;
 
   const rows = grid.length;
   const cols = grid[0].length;
-
-  // Optimize lookups with Sets and safety checks for elements
-  const pathSet = useMemo(() => {
-    const set = new Set<string>();
-    if (Array.isArray(path)) {
-      path.forEach((p) => {
-        if (p && p.length === 2) set.add(`${p[0]},${p[1]}`);
-      });
-    }
-    return set;
-  }, [path]);
-
-  const visitedSet = useMemo(() => {
-    const set = new Set<string>();
-    if (Array.isArray(visited)) {
-      visited.forEach((v) => {
-        if (v && v.length === 2) set.add(`${v[0]},${v[1]}`);
-      });
-    }
-    return set;
-  }, [visited]);
 
   return (
     <div
@@ -49,22 +29,14 @@ const Grid: React.FC<GridProps> = ({ grid = [], path = [], visited = [] }) => {
       {grid.map((row, r) =>
         row.map((cell, c) => {
           const coordKey = `${r},${c}`;
-          const isStartOrGoal = (r === 0 && c === 0) || (r === rows - 1 && c === cols - 1);
-          
-          let backgroundColor = 'white';
-          if (cell === 1) backgroundColor = 'black';
-          else if (isStartOrGoal) backgroundColor = 'red';
-          else if (pathSet.has(coordKey)) backgroundColor = 'green';
-          else if (visitedSet.has(coordKey)) backgroundColor = 'blue';
-
           return (
-            <div
+            <Cell
               key={coordKey}
-              style={{
-                width: '25px',
-                height: '25px',
-                backgroundColor,
-              }}
+              isWall={cell === 1}
+              isStart={r === 0 && c === 0}
+              isGoal={r === rows - 1 && c === cols - 1}
+              isVisited={visitedSet.has(coordKey)}
+              isPath={pathSet.has(coordKey)}
             />
           );
         })

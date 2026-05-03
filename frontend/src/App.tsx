@@ -8,11 +8,12 @@ function App() {
   const [fullVisited, setFullVisited] = useState<Coord[]>([]);
   const [fullPath, setFullPath] = useState<Coord[]>([]);
   
-  const [animatedVisited, setAnimatedVisited] = useState<Coord[]>([]);
-  const [animatedPath, setAnimatedPath] = useState<Coord[]>([]);
+  // Using Sets for O(1) lookups and to prevent unnecessary array scans
+  const [animatedVisited, setAnimatedVisited] = useState<Set<string>>(new Set());
+  const [animatedPath, setAnimatedPath] = useState<Set<string>>(new Set());
   
   const [isAnimating, setIsAnimating] = useState(false);
-  const [speed, setSpeed] = useState(20); // Default Medium (20ms)
+  const [speed, setSpeed] = useState(20);
   const animationRef = useRef<number | null>(null);
 
   const stopAnimation = () => {
@@ -25,8 +26,8 @@ function App() {
 
   const fetchNewMaze = async () => {
     stopAnimation();
-    setAnimatedVisited([]);
-    setAnimatedPath([]);
+    setAnimatedVisited(new Set());
+    setAnimatedPath(new Set());
 
     try {
       const response = await fetch('http://localhost:5000/solve');
@@ -45,9 +46,8 @@ function App() {
   const handleStart = () => {
     if (fullVisited.length === 0 || isAnimating) return;
     
-    // Reset animation states if we're starting over on same grid
-    setAnimatedVisited([]);
-    setAnimatedPath([]);
+    setAnimatedVisited(new Set());
+    setAnimatedPath(new Set());
     setIsAnimating(true);
     
     let visitedIdx = 0;
@@ -56,11 +56,25 @@ function App() {
     const interval = window.setInterval(() => {
       if (visitedIdx < fullVisited.length) {
         const nextNode = fullVisited[visitedIdx];
-        if (nextNode) setAnimatedVisited((prev) => [...prev, nextNode]);
+        if (nextNode) {
+          const key = `${nextNode[0]},${nextNode[1]}`;
+          setAnimatedVisited((prev) => {
+            const nextSet = new Set(prev);
+            nextSet.add(key);
+            return nextSet;
+          });
+        }
         visitedIdx++;
       } else if (pathIdx < fullPath.length) {
         const nextPathNode = fullPath[pathIdx];
-        if (nextPathNode) setAnimatedPath((prev) => [...prev, nextPathNode]);
+        if (nextPathNode) {
+          const key = `${nextPathNode[0]},${nextPathNode[1]}`;
+          setAnimatedPath((prev) => {
+            const nextSet = new Set(prev);
+            nextSet.add(key);
+            return nextSet;
+          });
+        }
         pathIdx++;
       } else {
         stopAnimation();
@@ -70,7 +84,6 @@ function App() {
     animationRef.current = interval;
   };
 
-  // Fetch initial maze on load
   useEffect(() => {
     fetchNewMaze();
     return () => stopAnimation();
@@ -90,10 +103,7 @@ function App() {
         backgroundColor: '#f4f4f4',
         borderRadius: '8px'
       }}>
-        <button 
-          onClick={fetchNewMaze} 
-          style={{ padding: '8px 16px', cursor: 'pointer' }}
-        >
+        <button onClick={fetchNewMaze} style={{ padding: '8px 16px', cursor: 'pointer' }}>
           New Maze
         </button>
 
@@ -128,7 +138,7 @@ function App() {
         </div>
       </div>
       
-      <Grid grid={grid} path={animatedPath} visited={animatedVisited} />
+      <Grid grid={grid} pathSet={animatedPath} visitedSet={animatedVisited} />
 
       <div style={{ marginTop: '20px', fontSize: '14px', display: 'flex', justifyContent: 'center', gap: '20px' }}>
         <span><span style={{ color: 'red' }}>■</span> Start/Goal</span>
