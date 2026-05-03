@@ -5,103 +5,135 @@ type Coord = [number, number];
 
 function App() {
   const [grid, setGrid] = useState<number[][]>([]);
+  const [fullVisited, setFullVisited] = useState<Coord[]>([]);
+  const [fullPath, setFullPath] = useState<Coord[]>([]);
+  
   const [animatedVisited, setAnimatedVisited] = useState<Coord[]>([]);
   const [animatedPath, setAnimatedPath] = useState<Coord[]>([]);
   
   const [isAnimating, setIsAnimating] = useState(false);
+  const [speed, setSpeed] = useState(20); // Default Medium (20ms)
   const animationRef = useRef<number | null>(null);
 
-  const fetchMaze = async () => {
-    // Clear any existing animation
+  const stopAnimation = () => {
     if (animationRef.current) {
       window.clearInterval(animationRef.current);
+      animationRef.current = null;
     }
-    
-    // Reset state for new run
+    setIsAnimating(false);
+  };
+
+  const fetchNewMaze = async () => {
+    stopAnimation();
     setAnimatedVisited([]);
     setAnimatedPath([]);
-    setIsAnimating(true);
 
     try {
       const response = await fetch('http://localhost:5000/solve');
       if (!response.ok) throw new Error("Failed to fetch");
       
       const data = await response.json();
-      
-      // Ensure data is valid before starting
-      const gridData = data.grid || [];
-      const visitedData = data.visited || [];
-      const pathData = data.path || [];
-      
-      setGrid(gridData);
-      
-      if (visitedData.length > 0) {
-        startAnimation(visitedData, pathData);
-      } else {
-        setIsAnimating(false);
-      }
+      setGrid(data.grid || []);
+      setFullVisited(data.visited || []);
+      setFullPath(data.path || []);
     } catch (error) {
       console.error("Error fetching maze:", error);
       alert("Error: Ensure the backend is running at http://localhost:5000");
-      setIsAnimating(false);
     }
   };
 
-  const startAnimation = (visited: Coord[], path: Coord[]) => {
+  const handleStart = () => {
+    if (fullVisited.length === 0 || isAnimating) return;
+    
+    // Reset animation states if we're starting over on same grid
+    setAnimatedVisited([]);
+    setAnimatedPath([]);
+    setIsAnimating(true);
+    
     let visitedIdx = 0;
     let pathIdx = 0;
 
     const interval = window.setInterval(() => {
-      if (visitedIdx < visited.length) {
-        const nextNode = visited[visitedIdx];
-        if (nextNode) {
-          setAnimatedVisited((prev) => [...prev, nextNode]);
-        }
+      if (visitedIdx < fullVisited.length) {
+        const nextNode = fullVisited[visitedIdx];
+        if (nextNode) setAnimatedVisited((prev) => [...prev, nextNode]);
         visitedIdx++;
-      } else if (pathIdx < path.length) {
-        const nextPathNode = path[pathIdx];
-        if (nextPathNode) {
-          setAnimatedPath((prev) => [...prev, nextPathNode]);
-        }
+      } else if (pathIdx < fullPath.length) {
+        const nextPathNode = fullPath[pathIdx];
+        if (nextPathNode) setAnimatedPath((prev) => [...prev, nextPathNode]);
         pathIdx++;
       } else {
-        window.clearInterval(interval);
-        setIsAnimating(false);
+        stopAnimation();
       }
-    }, 20);
+    }, speed);
 
     animationRef.current = interval;
   };
 
+  // Fetch initial maze on load
   useEffect(() => {
-    return () => {
-      if (animationRef.current) window.clearInterval(animationRef.current);
-    };
+    fetchNewMaze();
+    return () => stopAnimation();
   }, []);
 
   return (
-    <div style={{ textAlign: 'center', padding: '20px' }}>
+    <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'sans-serif' }}>
       <h1>A* Maze Solver</h1>
-      <button 
-        onClick={fetchMaze} 
-        disabled={isAnimating}
-        style={{
-          padding: '10px 20px',
-          fontSize: '16px',
-          cursor: 'pointer'
-        }}
-      >
-        {isAnimating ? 'Animating...' : 'Run A*'}
-      </button>
       
-      <div style={{ marginTop: '20px' }}>
-        <Grid grid={grid} path={animatedPath} visited={animatedVisited} />
-      </div>
+      <div style={{ 
+        marginBottom: '20px', 
+        display: 'flex', 
+        justifyContent: 'center', 
+        gap: '15px',
+        alignItems: 'center',
+        padding: '10px',
+        backgroundColor: '#f4f4f4',
+        borderRadius: '8px'
+      }}>
+        <button 
+          onClick={fetchNewMaze} 
+          style={{ padding: '8px 16px', cursor: 'pointer' }}
+        >
+          New Maze
+        </button>
 
-      <div style={{ marginTop: '10px', fontSize: '14px' }}>
-        <span style={{ marginRight: '10px' }}><span style={{ color: 'red' }}>■</span> Start/Goal</span>
-        <span style={{ marginRight: '10px' }}><span style={{ color: 'black' }}>■</span> Wall</span>
-        <span style={{ marginRight: '10px' }}><span style={{ color: 'blue' }}>■</span> Visited</span>
+        <button 
+          onClick={handleStart} 
+          disabled={isAnimating || fullVisited.length === 0}
+          style={{ 
+            padding: '8px 16px', 
+            cursor: isAnimating ? 'not-allowed' : 'pointer',
+            backgroundColor: isAnimating ? '#ccc' : '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px'
+          }}
+        >
+          {isAnimating ? 'Animating...' : 'Start Visualization'}
+        </button>
+
+        <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+          <label htmlFor="speed-select">Speed:</label>
+          <select 
+            id="speed-select"
+            value={speed} 
+            onChange={(e) => setSpeed(Number(e.target.value))}
+            disabled={isAnimating}
+            style={{ padding: '5px' }}
+          >
+            <option value={50}>Slow (50ms)</option>
+            <option value={20}>Medium (20ms)</option>
+            <option value={5}>Fast (5ms)</option>
+          </select>
+        </div>
+      </div>
+      
+      <Grid grid={grid} path={animatedPath} visited={animatedVisited} />
+
+      <div style={{ marginTop: '20px', fontSize: '14px', display: 'flex', justifyContent: 'center', gap: '20px' }}>
+        <span><span style={{ color: 'red' }}>■</span> Start/Goal</span>
+        <span><span style={{ color: 'black' }}>■</span> Wall</span>
+        <span><span style={{ color: 'blue' }}>■</span> Visited</span>
         <span><span style={{ color: 'green' }}>■</span> Path</span>
       </div>
     </div>
