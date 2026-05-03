@@ -8,22 +8,16 @@ interface GridProps {
 }
 
 const Grid: React.FC<GridProps> = ({ grid = [], pathSet, visitedSet }) => {
-  if (!grid || grid.length === 0) return <div>No maze generated yet.</div>;
+  if (!grid || grid.length === 0) return <div className="loading">Generating maze...</div>;
 
   const rows = grid.length;
   const cols = grid[0].length;
 
   return (
     <div
+      className="grid"
       style={{
-        display: 'grid',
-        gridTemplateColumns: `repeat(${cols}, 25px)`,
-        gridAutoRows: '25px',
-        gap: '1px',
-        backgroundColor: '#333',
-        border: '2px solid #333',
-        width: 'fit-content',
-        margin: '20px auto',
+        gridTemplateColumns: `repeat(${cols}, var(--cell-size))`,
       }}
     >
       {grid.map((row, r) =>

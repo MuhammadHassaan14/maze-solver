@@ -8,26 +8,15 @@ interface CellProps {
   isGoal: boolean;
 }
 
-// React.memo ensures this component only re-renders if its primitive props change.
-// In a grid of 400+ cells, this prevents hundreds of unnecessary re-renders per animation frame.
 const Cell: React.FC<CellProps> = React.memo(({ isWall, isVisited, isPath, isStart, isGoal }) => {
-  let backgroundColor = 'white';
+  let className = "cell";
   
-  if (isWall) backgroundColor = 'black';
-  else if (isStart || isGoal) backgroundColor = 'red';
-  else if (isPath) backgroundColor = 'green';
-  else if (isVisited) backgroundColor = 'blue';
+  if (isWall) className += " cell-wall";
+  else if (isStart || isGoal) className += " cell-start-goal";
+  else if (isPath) className += " cell-path";
+  else if (isVisited) className += " cell-visited";
 
-  return (
-    <div
-      style={{
-        width: '25px',
-        height: '25px',
-        backgroundColor,
-        transition: 'background-color 0.1s ease', // Smooth color transition
-      }}
-    />
-  );
+  return <div className={className} />;
 });
 
 export default Cell;

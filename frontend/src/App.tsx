@@ -8,7 +8,6 @@ function App() {
   const [fullVisited, setFullVisited] = useState<Coord[]>([]);
   const [fullPath, setFullPath] = useState<Coord[]>([]);
   
-  // Using Sets for O(1) lookups and to prevent unnecessary array scans
   const [animatedVisited, setAnimatedVisited] = useState<Set<string>>(new Set());
   const [animatedPath, setAnimatedPath] = useState<Set<string>>(new Set());
   
@@ -90,61 +89,58 @@ function App() {
   }, []);
 
   return (
-    <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'sans-serif' }}>
+    <div className="app-container">
       <h1>A* Maze Solver</h1>
       
-      <div style={{ 
-        marginBottom: '20px', 
-        display: 'flex', 
-        justifyContent: 'center', 
-        gap: '15px',
-        alignItems: 'center',
-        padding: '10px',
-        backgroundColor: '#f4f4f4',
-        borderRadius: '8px'
-      }}>
-        <button onClick={fetchNewMaze} style={{ padding: '8px 16px', cursor: 'pointer' }}>
+      <div className="control-panel">
+        <button className="button btn-secondary" onClick={fetchNewMaze}>
           New Maze
         </button>
 
         <button 
+          className="button btn-primary"
           onClick={handleStart} 
           disabled={isAnimating || fullVisited.length === 0}
-          style={{ 
-            padding: '8px 16px', 
-            cursor: isAnimating ? 'not-allowed' : 'pointer',
-            backgroundColor: isAnimating ? '#ccc' : '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px'
-          }}
         >
           {isAnimating ? 'Animating...' : 'Start Visualization'}
         </button>
 
-        <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+        <div className="select-wrapper">
           <label htmlFor="speed-select">Speed:</label>
           <select 
             id="speed-select"
             value={speed} 
             onChange={(e) => setSpeed(Number(e.target.value))}
             disabled={isAnimating}
-            style={{ padding: '5px' }}
           >
-            <option value={50}>Slow (50ms)</option>
-            <option value={20}>Medium (20ms)</option>
-            <option value={5}>Fast (5ms)</option>
+            <option value={50}>Slow</option>
+            <option value={20}>Medium</option>
+            <option value={5}>Fast</option>
           </select>
         </div>
       </div>
       
-      <Grid grid={grid} pathSet={animatedPath} visitedSet={animatedVisited} />
+      <div className="grid-wrapper">
+        <Grid grid={grid} pathSet={animatedPath} visitedSet={animatedVisited} />
+      </div>
 
-      <div style={{ marginTop: '20px', fontSize: '14px', display: 'flex', justifyContent: 'center', gap: '20px' }}>
-        <span><span style={{ color: 'red' }}>■</span> Start/Goal</span>
-        <span><span style={{ color: 'black' }}>■</span> Wall</span>
-        <span><span style={{ color: 'blue' }}>■</span> Visited</span>
-        <span><span style={{ color: 'green' }}>■</span> Path</span>
+      <div className="legend">
+        <div className="legend-item">
+          <div className="legend-box box-start-goal"></div>
+          <span>Start/Goal</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-box box-wall"></div>
+          <span>Wall</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-box box-visited"></div>
+          <span>Visited</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-box box-path"></div>
+          <span>Optimal Path</span>
+        </div>
       </div>
     </div>
   );
