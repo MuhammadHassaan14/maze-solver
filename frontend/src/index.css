@@ -27,7 +27,7 @@
 
 /* Dark Theme Overrides (Applied to body) */
 .dark-theme {
-  --bg-color: #020617; /* Neutral very dark background */
+  --bg-color: #0f172a; /* Smooth, rich navy/slate */
   --panel-bg: #1e293b; /* Distinct elevated panel */
   --text-main: #f0f0f0; /* Bright off-white for high readability */
   --text-muted: #aaaaaa; /* Neutral light gray for secondary text */
@@ -226,3 +226,33 @@ select {
 .box-wall { background-color: var(--color-wall); }
 .box-visited { background-color: var(--color-visited); }
 .box-path { background-color: var(--color-path); }
+
+/* Background Animated Grid */
+.background-grid-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  grid-template-rows: repeat(20, 1fr);
+  pointer-events: none;
+}
+
+.background-cell {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  animation: pulse-cell 20s infinite ease-in-out;
+}
+
+@keyframes pulse-cell {
+  0%, 100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(56, 189, 248, 0.06);
+  }
+}

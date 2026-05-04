@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Grid from './Grid';
+import BackgroundGrid from './BackgroundGrid';
 
 type Coord = [number, number];
 
@@ -104,6 +105,7 @@ function App() {
 
   return (
     <div className="app-container">
+      <BackgroundGrid speed={speed} />
       <h1>A* Maze Solver</h1>
       
       <div className="control-panel">
@@ -127,8 +129,8 @@ function App() {
             onChange={(e) => setSpeed(Number(e.target.value))}
             disabled={isAnimating}
           >
-            <option value={50}>Slow</option>
-            <option value={20}>Medium</option>
+            <option value={120}>Slow</option>
+            <option value={40}>Medium</option>
             <option value={5}>Fast</option>
           </select>
         </div>
