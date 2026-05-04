@@ -5,6 +5,8 @@ A professional full-stack application that generates guaranteed-solvable mazes a
 ## Features
 - **Guaranteed Solvable:** Backend generates random mazes and validates path existence before serving.
 - **A\* Visualization:** Watch the algorithm explore nodes and find the optimal path.
+- **Theme Support:** Dark/Light mode toggle with system preference detection and rich color palettes.
+- **Dynamic Background:** Speed-synced, animated background grid that pulses in rhythm with the visualization pace.
 - **Performance Optimized:** Uses `Set` for O(1) lookups and `React.memo` for smooth 60FPS animations on 400+ cells.
 - **Modern Dashboard:** Clean UI with speed controls and a responsive grid.
 
