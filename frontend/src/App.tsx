@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Grid from './Grid';
 import BackgroundGrid from './BackgroundGrid';
 
@@ -30,15 +30,15 @@ function App() {
     }
   }, [isDarkMode]);
 
-  const stopAnimation = () => {
+  const stopAnimation = useCallback(() => {
     if (animationRef.current) {
       window.clearInterval(animationRef.current);
       animationRef.current = null;
     }
     setIsAnimating(false);
-  };
+  }, []);
 
-  const fetchNewMaze = async () => {
+  const fetchNewMaze = useCallback(async () => {
     stopAnimation();
     setAnimatedVisited(new Set());
     setAnimatedPath(new Set());
@@ -55,7 +55,7 @@ function App() {
       console.error("Error fetching maze:", error);
       alert("Error: Ensure the backend is running at http://localhost:5000");
     }
-  };
+  }, [stopAnimation]);
 
   const handleStart = () => {
     if (fullVisited.length === 0 || isAnimating) return;
@@ -99,9 +99,24 @@ function App() {
   };
 
   useEffect(() => {
-    fetchNewMaze();
+    // Separate initial load logic from the full "Reset" flow
+    const initFetch = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/solve');
+        if (!response.ok) throw new Error("Failed to fetch");
+        const data = await response.json();
+        setGrid(data.grid || []);
+        setFullVisited(data.visited || []);
+        setFullPath(data.path || []);
+      } catch (error) {
+        console.error("Error fetching maze:", error);
+      }
+    };
+    
+    initFetch();
+    
     return () => stopAnimation();
-  }, []);
+  }, [stopAnimation]);
 
   return (
     <div className="app-container">
