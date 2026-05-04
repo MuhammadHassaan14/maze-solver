@@ -1,5 +1,5 @@
 :root {
-  /* Light Theme Variables */
+  /* Default Theme Variables */
   --bg-color: #f8fafc;
   --panel-bg: #ffffff;
   --text-main: #1e293b;
@@ -8,10 +8,9 @@
   --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --grid-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
   
-  --cell-size: 25px;
   --grid-bg: #334155;
   
-  /* Constant Grid Colors (Optimized for both themes) */
+  /* Constant Grid Colors */
   --color-wall: #1e293b;
   --color-start-goal: #ef4444;
   --color-visited: #60a5fa;
@@ -25,32 +24,49 @@
   --btn-sec-bg: #f1f5f9;
 }
 
-/* Dark Theme Overrides (Applied to body) */
+/* Dark Theme Overrides */
 .dark-theme {
-  --bg-color: #0f172a; /* Smooth, rich navy/slate */
-  --panel-bg: #1e293b; /* Distinct elevated panel */
-  --text-main: #f0f0f0; /* Bright off-white for high readability */
-  --text-muted: #aaaaaa; /* Neutral light gray for secondary text */
-  --border-color: #334155; /* Subtle light border for contrast */
+  --bg-color: #0f172a;
+  --panel-bg: #1e293b;
+  --text-main: #f0f0f0;
+  --text-muted: #aaaaaa;
+  --border-color: #334155;
   --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
   --grid-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
   
-  --color-empty: #1e293b; /* Neutral dark maze cells */
-  --color-wall: #000000;  /* Distinct pure black walls */
+  --color-empty: #1e293b;
+  --color-wall: #000000;
   --btn-sec-bg: #1e293b;
 }
 
+/* Light Theme Bluish Overrides */
+.light-theme {
+  --color-empty: #e0f2fe;
+  --color-wall: #1e3a8a;
+  --color-visited: #60a5fa;
+  --color-path: #22d3ee;
+  --color-start-goal: #ef4444;
+}
+
 /* Global Body Styles */
-body {
+html, body {
+  overflow-x: hidden;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--bg-color);
   color: var(--text-main);
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -59,15 +75,19 @@ body {
 }
 
 .app-container {
+  width: 100%;
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 15px;
+  box-sizing: border-box;
+  overflow-x: hidden;
   text-align: center;
 }
 
 h1 {
   font-weight: 800;
-  font-size: 2.5rem;
+  text-align: center;
+  font-size: clamp(1.5rem, 6vw, 2.5rem);
   margin-bottom: 1.5rem;
   letter-spacing: -0.025em;
   color: var(--text-main);
@@ -81,10 +101,12 @@ h1 {
   border-radius: 12px;
   box-shadow: var(--card-shadow);
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 1.2rem;
-  margin-bottom: 2rem;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 1rem;
   border: 1px solid var(--border-color);
   transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -164,15 +186,19 @@ select {
   gap: 1px;
   background-color: var(--grid-bg);
   border: 2px solid var(--grid-bg);
-  width: fit-content;
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
   box-shadow: var(--grid-shadow);
   transition: box-shadow 0.3s ease;
 }
 
 .cell {
-  width: var(--cell-size);
-  height: var(--cell-size);
+  width: 100%;
+  height: 100%;
   background-color: var(--color-empty);
+  border: 1px solid transparent;
   transition: background-color 0.1s ease;
 }
 
@@ -201,9 +227,11 @@ select {
 /* Legend */
 .legend {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  gap: 12px;
+  margin-top: 1rem;
+  width: 100%;
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--text-muted);

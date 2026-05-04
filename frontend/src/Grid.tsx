@@ -17,7 +17,7 @@ const Grid: React.FC<GridProps> = ({ grid = [], pathSet, visitedSet }) => {
     <div
       className="grid"
       style={{
-        gridTemplateColumns: `repeat(${cols}, var(--cell-size))`,
+        gridTemplateColumns: `repeat(${cols}, 1fr)`,
       }}
     >
       {grid.map((row, r) =>
