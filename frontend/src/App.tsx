@@ -44,7 +44,7 @@ function App() {
     setAnimatedPath(new Set());
 
     try {
-      const response = await fetch('http://localhost:5000/solve');
+      const response = await fetch('/api/solve');
       if (!response.ok) throw new Error("Failed to fetch");
       
       const data = await response.json();
@@ -102,7 +102,7 @@ function App() {
     // Separate initial load logic from the full "Reset" flow
     const initFetch = async () => {
       try {
-        const response = await fetch('http://localhost:5000/solve');
+        const response = await fetch('/api/solve');
         if (!response.ok) throw new Error("Failed to fetch");
         const data = await response.json();
         setGrid(data.grid || []);

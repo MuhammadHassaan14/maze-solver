@@ -19,7 +19,7 @@ def get_solvable_maze(rows=20, cols=20):
         if path:
             return grid, path, visited
 
-@app.route('/solve', methods=['GET'])
+@app.route('/api/solve', methods=['GET'])
 def solve():
     """
     API endpoint to get a solvable maze and its solution.
