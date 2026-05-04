@@ -13,7 +13,7 @@ function App() {
   const [animatedPath, setAnimatedPath] = useState<Set<string>>(new Set());
   
   const [isAnimating, setIsAnimating] = useState(false);
-  const [speed, setSpeed] = useState(20);
+  const [speed, setSpeed] = useState(40);
   const animationRef = useRef<number | null>(null);
 
   // Dark Mode State with System Preference check
