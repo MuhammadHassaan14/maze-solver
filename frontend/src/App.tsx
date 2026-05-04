@@ -53,7 +53,7 @@ function App() {
       setFullPath(data.path || []);
     } catch (error) {
       console.error("Error fetching maze:", error);
-      alert("Error: Ensure the backend is running at http://localhost:5000");
+      alert("Failed to connect to the backend API. Check the browser console (F12) for the exact error!");
     }
   }, [stopAnimation]);
 

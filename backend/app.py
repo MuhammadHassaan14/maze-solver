@@ -1,3 +1,8 @@
+import sys
+import os
+
+# Tell Python to look in this exact folder for modules like 'maze' and 'astar'
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from flask import Flask, jsonify
 from flask_cors import CORS
 from maze import generate_maze
